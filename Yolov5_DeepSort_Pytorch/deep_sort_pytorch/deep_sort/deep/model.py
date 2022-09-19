@@ -52,7 +52,7 @@ def make_layers(c_in, c_out, repeat_times, is_downsample=False):
 
 
 class Net(nn.Module):
-    def __init__(self, num_classes=751, reid=False):#更改训练类的数量
+    def __init__(self, num_classes=647, reid=False):#更改训练类的数量
         super(Net, self).__init__()
         # 3 128 64
         self.conv = nn.Sequential(
@@ -73,7 +73,7 @@ class Net(nn.Module):
         # 128 16 8
         self.layer4 = make_layers(256, 512, 2, True)
         # 256 8 4
-        self.avgpool = nn.AvgPool2d((8, 4), 1)
+        self.avgpool = nn.AvgPool2d((4, 8), 1)####对应改为（4*8） 原始为（8*4）
         # 256 1 1
         self.reid = reid
         self.classifier = nn.Sequential(

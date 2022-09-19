@@ -11,9 +11,9 @@ import torchvision
 from model import Net
 
 parser = argparse.ArgumentParser(description="Train on market1501")
-parser.add_argument("--data-dir", default='F:/wangyutian/YOLOv5/Yolov5_DeepSort_Pytorch1/deep_sort_pytorch/deep_sort/deep/Market-1501', type=str)
+parser.add_argument("--data-dir", default='/root/limeibin', type=str)
 parser.add_argument("--no-cuda", action="store_true")
-parser.add_argument("--gpu-id", default=0, type=int)
+parser.add_argument("--gpu-id", default=2, type=int)
 parser.add_argument("--lr", default=0.1, type=float)
 parser.add_argument("--interval", '-i', default=20, type=int)
 parser.add_argument('--resume', '-r', action='store_true')
@@ -27,17 +27,18 @@ if torch.cuda.is_available() and not args.no_cuda:
 
 # data loading
 root = args.data_dir
-train_dir = os.path.join(root, "train")
-test_dir = os.path.join(root, "test")
+train_dir = os.path.join(root, "train_deep")
+test_dir = os.path.join(root, "test_deep")
 transform_train = torchvision.transforms.Compose([
-    torchvision.transforms.RandomCrop((128, 64), padding=4),
+    torchvision.transforms.RandomCrop((64, 128), padding=4),#####改为64*128 ，原始为128*64
     torchvision.transforms.RandomHorizontalFlip(),
     torchvision.transforms.ToTensor(),
     torchvision.transforms.Normalize(
         [0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 transform_test = torchvision.transforms.Compose([
-    torchvision.transforms.Resize((128, 64)),
+    torchvision.transforms.Resize((64, 128)),####防止过拟合，加快收敛速度
+    torchvision.transforms.Resize((64, 128)),
     torchvision.transforms.ToTensor(),
     torchvision.transforms.Normalize(
         [0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -194,7 +195,7 @@ def lr_decay():
 
 
 def main():
-    for epoch in range(start_epoch, start_epoch+300):
+    for epoch in range(start_epoch, start_epoch+100):
         train_loss, train_err = train(epoch)
         test_loss, test_err = test(epoch)
         draw_curve(epoch, train_loss, train_err, test_loss, test_err)
